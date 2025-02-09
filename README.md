@@ -143,7 +143,6 @@ For this task, I needed to use the OpenAI in n8n to analyze incoming emails in G
   ![alt text](img/task3-task.png)
 - **Created Event in Google Calendar**
   ![alt text](img/task3-calendar.png)
-  
 - **Confirmation Email**
   ![alt text](img/task3-output-email.png)
 
