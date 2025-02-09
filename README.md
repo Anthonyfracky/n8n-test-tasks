@@ -51,8 +51,6 @@ I started with the registration process and familiarized myself with the environ
 
 Overall, it was not difficult to understand. The main task was simply connecting my Google account, and everything else worked quite intuitively. I found the process interesting, and it even gave me ideas for creating a personal project using n8n.
 
-Ось відформатований текст англійською з позначеними місцями для вставки скріншотів:
-
 ---
 
 ## Second Task: Automation with ClickUp API
@@ -143,7 +141,7 @@ For this task, I needed to use the OpenAI in n8n to analyze incoming emails in G
   ![alt text](img/task3-task.png)
 - **Created Event in Google Calendar**
   ![alt text](img/task3-calendar.png)
-  
+
 - **Confirmation Email**
   ![alt text](img/task3-output-email.png)
 
