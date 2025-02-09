@@ -1,0 +1,314 @@
+{
+  "name": "Task 3",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cc0659e2-af60-4582-96fb-7975fd461253",
+              "leftValue": "={{ $json.message.content.toNumber() }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "name": "IF",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -340,
+        -100
+      ],
+      "id": "05c42bf4-ce9f-45ed-8018-82492aa7a515",
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "team": "9015832094",
+        "space": "90153108922",
+        "folderless": true,
+        "list": "901508290120",
+        "name": "={{ $json.taskTitle }}",
+        "additionalFields": {
+          "content": "={{ $json.taskDescription }}",
+          "dueDate": "={{ $json.dueDate }}",
+          "priority": "={{ $json.priority }}"
+        }
+      },
+      "name": "ClickUp",
+      "type": "n8n-nodes-base.clickUp",
+      "position": [
+        460,
+        -320
+      ],
+      "id": "96a6a921-cb2a-4b3e-979f-9352a054010f",
+      "typeVersion": 1,
+      "credentials": {
+        "clickUpApi": {
+          "id": "76POFup6MWFPlZKR",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "anthonyf.workk@gmail.com",
+          "mode": "list",
+          "cachedResultName": "anthonyf.workk@gmail.com"
+        },
+        "useDefaultReminders": false,
+        "additionalFields": {
+          "description": "={{ $json.taskDescription }}",
+          "summary": "={{ $json.taskTitle }}"
+        }
+      },
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "position": [
+        460,
+        80
+      ],
+      "id": "eee4fefc-f4fe-4c72-9492-5a0efa63fab9",
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uh0qVfxhxBhRcxYf",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "anthonyf.workk@gmail.com",
+        "subject": "=Task Created: {{ $json.taskTitle }}",
+        "emailType": "text",
+        "message": "=A new task has been created by the system!  \nHere are the details: \n- Task Name: {{ $json.taskTitle }}\n- Description: {{ $json.taskDescription }}\nPlease review the task and take appropriate action.  \nYour n8n system 🤖",
+        "options": {}
+      },
+      "name": "Send Confirmation",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        460,
+        -120
+      ],
+      "id": "9f489711-fb92-42ea-826b-2e359358af5d",
+      "typeVersion": 2.1,
+      "webhookId": "601fe360-00a3-4b29-8f25-07f431d92c1b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "juQOrzRo4NoUNxh5",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -860,
+        -100
+      ],
+      "id": "6bbf2dd0-601e-4385-9d89-53c2c078bfcd",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "juQOrzRo4NoUNxh5",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama-3.3-70b-versatile",
+          "mode": "list",
+          "cachedResultName": "LLAMA-3.3-70B-VERSATILE"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Analysis of email content:\n{{ $json.snippet }}\n\nPlease analyze if this email contains a task or request that needs action. Return only '1' if task or '0' if no task. Return only number without thinking"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -680,
+        -100
+      ],
+      "id": "b02563f2-29c1-4714-ae5f-dc226e6ad948",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "KeLkLbGomcf5X1Ub",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "llama-3.3-70b-versatile",
+          "mode": "list",
+          "cachedResultName": "LLAMA-3.3-70B-VERSATILE"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Analysis of email content:\n{{ $('Gmail Trigger').item.json.snippet }}\n\nThis email has already been identified as a task. Please analyze the email text and extract the following details to create a task:\n\n- **taskTitle**: a short title for the task (one or two sentences summarizing the essence of the task);\n- **taskDescription**: a detailed description of the task, including all important details and instructions;\n- **dueDate**: if a date or deadline is mentioned in the text, specify it in ISO 8601 format (e.g., \"2025-02-09T15:30:00Z\"), or return null if no date is specified;\n- **priority**: determine the priority of the task from the context of the message, using one of the following levels: \"Urgent\", \"High\", \"Normal\", or \"Low\". Format the priority as follows:\nReturn only a valid JSON object in the following format:\n\n```json\n{\n  \"taskTitle\": \"Example Title\",\n  \"taskDescription\": \"Example description...\",\n  \"dueDate\": \"2025-02-09T15:30:00Z\",\n  \"priority\": \"High\"\n}\n```"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -140,
+        -120
+      ],
+      "id": "55fb4dc1-ebe8-48c7-8856-b59d206552b4",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "KeLkLbGomcf5X1Ub",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.message.content;\n\nconst startIndex = jsonString.indexOf(\"`json\") + 6;\n\nconst endIndex = jsonString.indexOf(\"```\", startIndex);\n\nconst jsonSubstring = jsonString.substring(startIndex, endIndex).trim();\n\nconst jsonObject = JSON.parse(jsonSubstring);\n\nswitch (jsonObject.priority) {\n  case \"Urgent\":\n    jsonObject.priority = 1;\n    break;\n  case \"High\":\n    jsonObject.priority = 2;\n    break;\n  case \"Normal\":\n    jsonObject.priority = 3;\n    break;\n  case \"Low\":\n    jsonObject.priority = 4;\n    break;\n  default:\n    jsonObject.priority = null;\n    break;\n}\n\nreturn jsonObject;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        -120
+      ],
+      "id": "993e17a3-af12-4131-a73b-349575ea1331",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "IF": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "ClickUp": {
+      "main": [
+        []
+      ]
+    },
+    "Google Calendar": {
+      "main": [
+        []
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "IF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "ClickUp",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Calendar",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2aec45e5-f28d-48d7-83b8-66fe6f47bdac",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "530a9d95d8e289fa2ee617f09b48a3c7911c342fb39b530ada0e054ac7db4f31"
+  },
+  "id": "GHRHlCaXXEZPo4p9",
+  "tags": []
+}
